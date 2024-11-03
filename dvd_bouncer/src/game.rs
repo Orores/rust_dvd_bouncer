@@ -5,11 +5,12 @@ use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
 use ggez::mint::Point2;
 use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button};
-use crate::utils::{generate_random_index, parse_velocity_input, is_point_in_rect};
+use crate::utils::{generate_random_index, parse_velocity_input, is_point_in_rect, calculate_next_position};
 
 pub struct DVDLogo {
     position: na::Point2<f32>,
-    velocity: na::Vector2<f32>,
+    velocity: f32,
+    angle: f32,
     color_index: usize,
     logo_meshes: Vec<graphics::Mesh>,
     velocity_input: String,
@@ -18,32 +19,26 @@ pub struct DVDLogo {
 impl DVDLogo {
     pub fn new(ctx: &mut Context) -> GameResult<DVDLogo> {
         let position = na::Point2::new(100.0, 100.0);
-        let velocity = na::Vector2::new(10.0, 10.0); // Default velocity
+        let velocity = 10.0; // Default velocity
+        let angle = std::f32::consts::FRAC_PI_4; // 1/4 pi, sin = 1, cos = 0
 
         let logo_meshes = create_logo_meshes(ctx)?;
 
         Ok(DVDLogo {
             position,
             velocity,
+            angle,
             color_index: 0,
             logo_meshes,
             velocity_input: String::new(),
         })
     }
 
-    pub fn update_position(&mut self, ctx: &mut Context) {
-        self.position += self.velocity;
-        let screen_bounds = graphics::screen_coordinates(ctx);
-
-        if self.position.x < screen_bounds.left() || self.position.x + 50.0 > screen_bounds.right() {
-            self.velocity.x = -self.velocity.x;
-            self.change_color();
-        }
-
-        if self.position.y < screen_bounds.top() || self.position.y + 30.0 > screen_bounds.bottom() {
-            self.velocity.y = -self.velocity.y;
-            self.change_color();
-        }
+    pub fn update_position(&mut self) {
+        let (new_x, new_y) = calculate_next_position(self.position.x, self.position.y, self.velocity, self.angle);
+        self.position.x = new_x;
+        self.position.y = new_y;
+        self.change_color();
     }
 
     fn change_color(&mut self) {
@@ -52,14 +47,14 @@ impl DVDLogo {
 
     fn apply_velocity(&mut self) {
         if let Some(new_velocity) = parse_velocity_input(&self.velocity_input) {
-            self.velocity = na::Vector2::new(new_velocity, new_velocity);
+            self.velocity = new_velocity;
         }
     }
 }
 
 impl EventHandler for DVDLogo {
-    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.update_position(ctx);
+    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+        self.update_position();
         Ok(())
     }
 
