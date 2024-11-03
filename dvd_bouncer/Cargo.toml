@@ -1,0 +1,10 @@
+[package]
+name = "dvd_bouncer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ggez = "0.7"
+rand = "0.8"
+nalgebra = "0.29"
+mint = "0.5"  # Add the mint crate to the dependencies
