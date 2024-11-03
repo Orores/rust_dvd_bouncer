@@ -5,7 +5,7 @@ use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
 use ggez::mint::Point2;
 use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button};
-use crate::utils::{generate_random_index, parse_velocity_input, is_point_in_rect, calculate_next_position};
+use crate::utils::{should_change_color, parse_velocity_input, is_point_in_rect, calculate_next_position};
 
 pub struct DVDLogo {
     position: na::Point2<f32>,
@@ -35,14 +35,22 @@ impl DVDLogo {
     }
 
     pub fn update_position(&mut self) {
-        let (new_x, new_y) = calculate_next_position(self.position.x, self.position.y, self.velocity, self.angle);
-        self.position.x = new_x;
-        self.position.y = new_y;
-        self.change_color();
+        let new_x = self.position.x + self.velocity * self.angle.cos();
+        let new_y = self.position.y + self.velocity * self.angle.sin();
+        
+        // Check if the color should change
+        if should_change_color(new_x, new_y) {
+            self.change_color();
+        }
+
+        // Update the position with modulo logic
+        self.position.x = new_x.rem_euclid(500.0);
+        self.position.y = new_y.rem_euclid(500.0);
     }
 
     fn change_color(&mut self) {
-        self.color_index = generate_random_index(self.logo_meshes.len());
+        // Toggle between red (0) and blue (1)
+        self.color_index = 1 - self.color_index;
     }
 
     fn apply_velocity(&mut self) {

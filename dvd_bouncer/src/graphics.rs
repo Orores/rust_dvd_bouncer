@@ -2,16 +2,12 @@ use ggez::{Context, GameResult};
 use ggez::graphics::{self, Color, Mesh, Rect, Text, DrawParam, DrawMode};
 use ggez::mint::Point2;
 
-/// Creates a set of meshes for the DVD logo with different colors.
+/// Creates a set of meshes for the DVD logo with red and blue colors.
 pub fn create_logo_meshes(ctx: &mut Context) -> GameResult<Vec<Mesh>> {
-    // Define a list of colors for the logo
+    // Define red and blue colors for the logo
     let colors = vec![
         Color::from_rgb(255, 0, 0),   // Red
-        Color::from_rgb(0, 255, 0),   // Green
         Color::from_rgb(0, 0, 255),   // Blue
-        Color::from_rgb(255, 255, 0), // Yellow
-        Color::from_rgb(0, 255, 255), // Cyan
-        Color::from_rgb(255, 0, 255), // Magenta
     ];
 
     // Create a mesh for each color
@@ -70,3 +66,4 @@ pub fn draw_apply_button(ctx: &mut Context) -> GameResult<()> {
     )
     .map_err(|e| e.into()) // Ensure a proper GameResult is returned
 }
+
