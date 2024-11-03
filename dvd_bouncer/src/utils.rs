@@ -4,11 +4,26 @@ pub fn should_change_color(new_x: f32, new_y: f32, width: f32, height: f32) -> b
 }
 
 /// Calculates the next position using modulo logic for the given box size.
-pub fn calculate_next_position(x: f32, y: f32, velocity: f32, angle: f32, width: f32, height: f32) -> (f32, f32) {
+pub fn calculate_next_position(
+    x: f32, 
+    y: f32, 
+    velocity: f32, 
+    angle: f32, 
+    width: f32, 
+    height: f32, 
+    invert_x: f32, 
+    invert_y: f32
+) -> (f32, f32, f32, f32) {
     // Calculate new position based on velocity and angle
     let new_x = x + velocity * angle.cos();
     let new_y = y + velocity * angle.sin();
-    (new_x.rem_euclid(width), new_y.rem_euclid(height))
+
+    // Determine if direction should be inverted
+    let new_invert_x = if new_x <= 0.0 || new_x >= width { -invert_x } else { invert_x };
+    let new_invert_y = if new_y <= 0.0 || new_y >= height { -invert_y } else { invert_y };
+    println!("Invert x: {}", new_invert_x);
+    println!("new x: {}", new_x);
+    (new_x.rem_euclid(width), new_y.rem_euclid(height), new_invert_x, new_invert_y)
 }
 
 /// Validates and parses the velocity input.

@@ -66,4 +66,3 @@ pub fn draw_apply_button(ctx: &mut Context) -> GameResult<()> {
     )
     .map_err(|e| e.into()) // Ensure a proper GameResult is returned
 }
-
