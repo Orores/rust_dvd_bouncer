@@ -1,24 +1,25 @@
 use ggez::{Context, GameResult};
 use ggez::event::EventHandler;
 use ggez::graphics::{self, Color, DrawParam};
+use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
-use ggez::mint::Point2; // Corrected import to use ggez's re-exported mint
-use crate::graphics::create_logo_meshes;
-use crate::utils::generate_random_index;
+use ggez::mint::Point2;
+use crate::graphics::{create_logo_meshes, draw_velocity_input};
+use crate::utils::{generate_random_index, parse_velocity_input};
 
 pub struct DVDLogo {
     position: na::Point2<f32>,
     velocity: na::Vector2<f32>,
     color_index: usize,
     logo_meshes: Vec<graphics::Mesh>,
+    velocity_input: String,
 }
 
 impl DVDLogo {
     pub fn new(ctx: &mut Context) -> GameResult<DVDLogo> {
         let position = na::Point2::new(100.0, 100.0);
-        let velocity = na::Vector2::new(2.5, 2.0);
+        let velocity = na::Vector2::new(10.0, 10.0); // Default velocity
 
-        // Create a set of precomputed meshes with different colors
         let logo_meshes = create_logo_meshes(ctx)?;
 
         Ok(DVDLogo {
@@ -26,6 +27,7 @@ impl DVDLogo {
             velocity,
             color_index: 0,
             logo_meshes,
+            velocity_input: String::new(),
         })
     }
 
@@ -45,13 +47,21 @@ impl DVDLogo {
     }
 
     fn change_color(&mut self) {
-        // Change the color by updating the color index
         self.color_index = generate_random_index(self.logo_meshes.len());
+    }
+
+    fn apply_velocity(&mut self) {
+        if let Some(new_velocity) = parse_velocity_input(&self.velocity_input) {
+            self.velocity = na::Vector2::new(new_velocity, new_velocity);
+        }
     }
 }
 
 impl EventHandler for DVDLogo {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        if keyboard::is_key_pressed(ctx, KeyCode::Return) {
+            self.apply_velocity();
+        }
         self.update_position(ctx);
         Ok(())
     }
@@ -63,7 +73,24 @@ impl EventHandler for DVDLogo {
             &self.logo_meshes[self.color_index],
             DrawParam::default().dest(Point2 { x: self.position.x, y: self.position.y }),
         )?;
+
+        // Draw the velocity input field
+        draw_velocity_input(ctx, &self.velocity_input)?;
+
         graphics::present(ctx)?;
         Ok(())
     }
+
+    fn text_input_event(&mut self, _ctx: &mut Context, character: char) {
+        if character.is_digit(10) || character == '.' {
+            self.velocity_input.push(character);
+        }
+    }
+
+    fn key_down_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymods: keyboard::KeyMods, _repeat: bool) {
+        if keycode == KeyCode::Back {
+            self.velocity_input.pop();
+        }
+    }
 }
+

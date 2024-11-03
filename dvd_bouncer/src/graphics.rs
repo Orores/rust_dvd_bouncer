@@ -1,5 +1,6 @@
 use ggez::{Context, GameResult};
-use ggez::graphics::{self, Color, Mesh, Rect};
+use ggez::graphics::{self, Color, Mesh, Rect, Text, DrawParam};
+use ggez::mint::Point2;
 
 /// Creates a set of meshes for the DVD logo with different colors.
 pub fn create_logo_meshes(ctx: &mut Context) -> GameResult<Vec<Mesh>> {
@@ -26,5 +27,16 @@ pub fn create_logo_meshes(ctx: &mut Context) -> GameResult<Vec<Mesh>> {
     }
 
     Ok(meshes) // Return the vector of meshes
+}
+
+/// Renders the velocity input field on the screen.
+pub fn draw_velocity_input(ctx: &mut Context, input: &str) -> GameResult<()> {
+    let input_display = Text::new(format!("Velocity: {}", input));
+    graphics::draw(
+        ctx,
+        &input_display,
+        DrawParam::default().dest(Point2 { x: 10.0, y: 50.0 }),
+    )
+    .map_err(|e| e.into()) // Ensure a proper GameResult is returned
 }
 

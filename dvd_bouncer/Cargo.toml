@@ -7,4 +7,3 @@ edition = "2021"
 ggez = "0.7"
 rand = "0.8"
 nalgebra = "0.29"
-mint = "0.5"  # Add the mint crate to the dependencies
