@@ -18,13 +18,18 @@ fn main() -> GameResult {
         path::PathBuf::from("./resources")
     };
 
+    // Define the window size
+    let (width, height) = (800.0, 600.0); // Example size, you can adjust as needed
+
     // Initialize the context and event loop
     let (mut ctx, event_loop) = ContextBuilder::new("dvd_logo", "author")
         .add_resource_path(resource_dir)
+        .window_setup(ggez::conf::WindowSetup::default().title("DVD Bouncer"))
+        .window_mode(ggez::conf::WindowMode::default().dimensions(width, height))
         .build()?;
 
-    // Create the game state
-    let state = DVDLogo::new(&mut ctx)?;
+    // Create the game state with the window dimensions
+    let state = DVDLogo::new(&mut ctx, width, height)?;
 
     // Main event loop
     event::run(ctx, event_loop, state)

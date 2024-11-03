@@ -1,14 +1,14 @@
 /// Determines whether the color should change based on the new position.
-pub fn should_change_color(new_x: f32, new_y: f32) -> bool {
-    new_x > 500.0 || new_y > 500.0
+pub fn should_change_color(new_x: f32, new_y: f32, width: f32, height: f32) -> bool {
+    new_x > width || new_y > height
 }
 
-/// Calculates the next position using modulo logic for a 500x500 box.
-pub fn calculate_next_position(x: f32, y: f32, velocity: f32, angle: f32) -> (f32, f32) {
+/// Calculates the next position using modulo logic for the given box size.
+pub fn calculate_next_position(x: f32, y: f32, velocity: f32, angle: f32, width: f32, height: f32) -> (f32, f32) {
     // Calculate new position based on velocity and angle
     let new_x = x + velocity * angle.cos();
     let new_y = y + velocity * angle.sin();
-    (new_x.rem_euclid(500.0), new_y.rem_euclid(500.0))
+    (new_x.rem_euclid(width), new_y.rem_euclid(height))
 }
 
 /// Validates and parses the velocity input.
@@ -27,3 +27,4 @@ pub fn is_point_in_rect(point: (f32, f32), rect_pos: (f32, f32), rect_size: (f32
 
     px >= rx && px <= rx + rw && py >= ry && py <= ry + rh
 }
+

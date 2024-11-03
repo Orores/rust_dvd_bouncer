@@ -5,7 +5,7 @@ use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
 use ggez::mint::Point2;
 use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button};
-use crate::utils::{should_change_color, parse_velocity_input, is_point_in_rect, calculate_next_position};
+use crate::utils::{should_change_color, parse_velocity_input, is_point_in_rect};
 
 pub struct DVDLogo {
     position: na::Point2<f32>,
@@ -14,10 +14,12 @@ pub struct DVDLogo {
     color_index: usize,
     logo_meshes: Vec<graphics::Mesh>,
     velocity_input: String,
+    width: f32,
+    height: f32,
 }
 
 impl DVDLogo {
-    pub fn new(ctx: &mut Context) -> GameResult<DVDLogo> {
+    pub fn new(ctx: &mut Context, width: f32, height: f32) -> GameResult<DVDLogo> {
         let position = na::Point2::new(100.0, 100.0);
         let velocity = 10.0; // Default velocity
         let angle = std::f32::consts::FRAC_PI_4; // 1/4 pi, sin = 1, cos = 0
@@ -31,6 +33,8 @@ impl DVDLogo {
             color_index: 0,
             logo_meshes,
             velocity_input: String::new(),
+            width,
+            height,
         })
     }
 
@@ -39,13 +43,13 @@ impl DVDLogo {
         let new_y = self.position.y + self.velocity * self.angle.sin();
         
         // Check if the color should change
-        if should_change_color(new_x, new_y) {
+        if should_change_color(new_x, new_y, self.width, self.height) {
             self.change_color();
         }
 
         // Update the position with modulo logic
-        self.position.x = new_x.rem_euclid(500.0);
-        self.position.y = new_y.rem_euclid(500.0);
+        self.position.x = new_x.rem_euclid(self.width);
+        self.position.y = new_y.rem_euclid(self.height);
     }
 
     fn change_color(&mut self) {
