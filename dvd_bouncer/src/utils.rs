@@ -14,5 +14,12 @@ pub fn parse_velocity_input(input: &str) -> Option<f32> {
     }
 }
 
+/// Checks if a given point is within a rectangular area.
+pub fn is_point_in_rect(point: (f32, f32), rect_pos: (f32, f32), rect_size: (f32, f32)) -> bool {
+    let (px, py) = point;
+    let (rx, ry) = rect_pos;
+    let (rw, rh) = rect_size;
 
+    px >= rx && px <= rx + rw && py >= ry && py <= ry + rh
+}
 

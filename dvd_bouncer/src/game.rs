@@ -1,11 +1,11 @@
 use ggez::{Context, GameResult};
-use ggez::event::EventHandler;
+use ggez::event::{EventHandler, MouseButton};
 use ggez::graphics::{self, Color, DrawParam};
 use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
 use ggez::mint::Point2;
-use crate::graphics::{create_logo_meshes, draw_velocity_input};
-use crate::utils::{generate_random_index, parse_velocity_input};
+use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button};
+use crate::utils::{generate_random_index, parse_velocity_input, is_point_in_rect};
 
 pub struct DVDLogo {
     position: na::Point2<f32>,
@@ -59,9 +59,6 @@ impl DVDLogo {
 
 impl EventHandler for DVDLogo {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        if keyboard::is_key_pressed(ctx, KeyCode::Return) {
-            self.apply_velocity();
-        }
         self.update_position(ctx);
         Ok(())
     }
@@ -74,8 +71,9 @@ impl EventHandler for DVDLogo {
             DrawParam::default().dest(Point2 { x: self.position.x, y: self.position.y }),
         )?;
 
-        // Draw the velocity input field
-        draw_velocity_input(ctx, &self.velocity_input)?;
+        // Draw the velocity input box and apply button
+        draw_velocity_input_box(ctx, &self.velocity_input)?;
+        draw_apply_button(ctx)?;
 
         graphics::present(ctx)?;
         Ok(())
@@ -92,5 +90,13 @@ impl EventHandler for DVDLogo {
             self.velocity_input.pop();
         }
     }
-}
 
+    fn mouse_button_down_event(&mut self, _ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
+        if button == MouseButton::Left {
+            // Check if the click is within the apply button's area
+            if is_point_in_rect((x, y), (220.0, 50.0), (80.0, 30.0)) {
+                self.apply_velocity();
+            }
+        }
+    }
+}
