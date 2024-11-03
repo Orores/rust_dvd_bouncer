@@ -4,7 +4,7 @@ use ggez::graphics::{self, Color, DrawParam};
 use ggez::input::keyboard::{self, KeyCode};
 use nalgebra as na;
 use ggez::mint::Point2;
-use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button};
+use crate::graphics::{create_logo_meshes, draw_velocity_input_box, draw_apply_button, get_rectangle_dimensions};
 use crate::utils::{should_change_color, parse_velocity_input, is_point_in_rect, calculate_next_position};
 
 pub struct DVDLogo {
@@ -18,6 +18,8 @@ pub struct DVDLogo {
     height: f32,
     invert_x: f32,
     invert_y: f32,
+    rect_width: f32,
+    rect_height: f32,
 }
 
 impl DVDLogo {
@@ -28,6 +30,9 @@ impl DVDLogo {
         let invert_x = 1.0;
         let invert_y = 1.0;
         let logo_meshes = create_logo_meshes(ctx)?;
+
+        // Get rectangle dimensions
+        let (rect_width, rect_height) = get_rectangle_dimensions();
 
         Ok(DVDLogo {
             position,
@@ -40,6 +45,8 @@ impl DVDLogo {
             height,
             invert_x,
             invert_y,
+            rect_width,
+            rect_height,
         })
     }
 
@@ -53,6 +60,8 @@ impl DVDLogo {
             self.height,
             self.invert_x,
             self.invert_y,
+            self.rect_width,
+            self.rect_height,
         );
 
         // Check if the color should change
@@ -137,4 +146,3 @@ impl EventHandler for DVDLogo {
         }
     }
 }
-

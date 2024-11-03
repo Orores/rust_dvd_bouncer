@@ -12,7 +12,9 @@ pub fn calculate_next_position(
     width: f32, 
     height: f32, 
     invert_x: f32, 
-    invert_y: f32
+    invert_y: f32,
+    rect_width: f32, 
+    rect_height: f32
 ) -> (f32, f32, f32, f32) {
     // Calculate new position based on velocity and angle
     let new_x = x + velocity * angle.cos();
@@ -21,9 +23,12 @@ pub fn calculate_next_position(
     // Determine if direction should be inverted
     let new_invert_x = if new_x <= 0.0 || new_x >= width { -invert_x } else { invert_x };
     let new_invert_y = if new_y <= 0.0 || new_y >= height { -invert_y } else { invert_y };
-    println!("Invert x: {}", new_invert_x);
-    println!("new x: {}", new_x);
-    (new_x.rem_euclid(width), new_y.rem_euclid(height), new_invert_x, new_invert_y)
+
+    // Calculate view boundaries with rectangle size included
+    let view_width = width + rect_width;
+    let view_height = height + rect_height;
+
+    (new_x.rem_euclid(view_width), new_y.rem_euclid(view_height), new_invert_x, new_invert_y)
 }
 
 /// Validates and parses the velocity input.
@@ -42,4 +47,3 @@ pub fn is_point_in_rect(point: (f32, f32), rect_pos: (f32, f32), rect_size: (f32
 
     px >= rx && px <= rx + rw && py >= ry && py <= ry + rh
 }
-

@@ -2,6 +2,10 @@ use ggez::{Context, GameResult};
 use ggez::graphics::{self, Color, Mesh, Rect, Text, DrawParam, DrawMode};
 use ggez::mint::Point2;
 
+/// Rectangle dimensions for the DVD logo
+const RECTANGLE_WIDTH: f32 = 50.0;
+const RECTANGLE_HEIGHT: f32 = 30.0;
+
 /// Creates a set of meshes for the DVD logo with red and blue colors.
 pub fn create_logo_meshes(ctx: &mut Context) -> GameResult<Vec<Mesh>> {
     // Define red and blue colors for the logo
@@ -16,7 +20,7 @@ pub fn create_logo_meshes(ctx: &mut Context) -> GameResult<Vec<Mesh>> {
         let mesh = Mesh::new_rectangle(
             ctx,
             graphics::DrawMode::fill(),
-            Rect::new(0.0, 0.0, 50.0, 30.0),
+            Rect::new(0.0, 0.0, RECTANGLE_WIDTH, RECTANGLE_HEIGHT),
             color,
         )?;
         meshes.push(mesh);
@@ -66,3 +70,9 @@ pub fn draw_apply_button(ctx: &mut Context) -> GameResult<()> {
     )
     .map_err(|e| e.into()) // Ensure a proper GameResult is returned
 }
+
+/// Provides rectangle dimensions for external use
+pub fn get_rectangle_dimensions() -> (f32, f32) {
+    (RECTANGLE_WIDTH, RECTANGLE_HEIGHT)
+}
+
