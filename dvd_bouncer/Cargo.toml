@@ -1,1 +1,12 @@
-The logic you described does not require any changes to the `Cargo.toml` file. The `Cargo.toml` file is used for specifying the package's metadata and dependencies, and the tasks you've described pertain to code logic within the source files. Therefore, no modifications to `Cargo.toml` are necessary for implementing the requested features. If you have any other request or need further assistance, feel free to ask!
+[package]
+name = "dvd_bouncer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ggez = "0.7"
+rand = "0.8"
+nalgebra = "0.29"
+
+[profile.release]
+debug = true
